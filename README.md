@@ -1,8 +1,9 @@
 # CAFLTAR_object_detection
 script to connect to url and run fasterrcnn on images
 
-## intructions to run
-
+## Intructions to run
+### Install docker
+### Run these lines in command line with your url
 docker build -t object-detector .
 
 
