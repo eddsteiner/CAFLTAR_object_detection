@@ -8,3 +8,6 @@ docker build -t object-detector .
 
 
 docker run object-detector your_url
+
+### To see example of JSON output
+python test.py
