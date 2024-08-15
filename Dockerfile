@@ -6,7 +6,7 @@ WORKDIR /app
 # Copy the current directory contents into the container at /app
 COPY . /app
 
-# Install any needed packages specified in requirements.txt
+# Install any needed packages 
 RUN pip install --no-cache-dir torch torchvision pillow requests
 
 # Make port 80 available to the world outside this container
