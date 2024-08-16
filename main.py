@@ -14,6 +14,13 @@ import datetime
 model = fasterrcnn_resnet50_fpn(pretrained=True)
 model.eval()  # Set the model to evaluation mode
 
+groups = {
+    "vehicles": ["car", "truck", "motorcycle", "bicycle", "bus", "train", "boat", "bike"],
+    "animals": ["dog", "cat", "bird", "horse", "sheep", "cow"],
+    "person": ["person"],
+    
+}
+
 # Category names
 COCO_INSTANCE_CATEGORY_NAMES = [
     '__background__', 'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus',
@@ -45,12 +52,16 @@ def postprocess(output, threshold=0.3):
 
     for box, label, score in zip(boxes, labels, scores):
         if score >= threshold:
-            detected_objects.append({
-                #"box": box.tolist(),
-                "timestamp": current_time,
-                "label": COCO_INSTANCE_CATEGORY_NAMES[label.item()],
-                "score": score.item()
-            })
+            label_name = COCO_INSTANCE_CATEGORY_NAMES[label.item()]
+            for group_name, group_items in groups.items():
+                if label_name in group_items:  # Check if the label belongs to any group
+                    detected_objects.append({
+                        #"box": box.tolist(),
+                        "timestamp": current_time,
+                        "label": label_name,
+                        "score": score.item()
+                    })
+                   
 
     return detected_objects
 
