@@ -51,6 +51,7 @@ def postprocess(output, threshold=0.3):
     current_time = datetime.datetime.now().isoformat()
 
     for box, label, score in zip(boxes, labels, scores):
+        print(f'Detected object: {COCO_INSTANCE_CATEGORY_NAMES[label.item()]} ({score})')
         if score >= threshold:
             label_name = COCO_INSTANCE_CATEGORY_NAMES[label.item()]
             for group_name, group_items in groups.items():
@@ -66,44 +67,49 @@ def postprocess(output, threshold=0.3):
     return detected_objects
 
 # Main function
-def main(url):
-    while True:
-        try:
-            # Load the image from the URL
-            response = requests.get(url)
-            img = Image.open(BytesIO(response.content)).convert("RGB")
+def main(url, score_threshold):
+    try:
+        # Load the image from the URL
+        print('Loading: ' + url)
+        response = requests.get(url)
+        img = Image.open(BytesIO(response.content)).convert("RGB")
 
-            # Preprocess the image
-            input_tensor = preprocess(img)
+        # Preprocess the image
+        print('Preprocessing the image...')
+        input_tensor = preprocess(img)
 
-            # Run the model
-            with torch.no_grad():
-                outputs = model(input_tensor)
+        # Run the model
+        print('Running the model...')
+        with torch.no_grad():
+            outputs = model(input_tensor)
 
-            # Postprocess the outputs
-            detections = postprocess(outputs)
+        # Postprocess the outputs
+        print('Postprocessing results...')
+        detections = postprocess(outputs, score_threshold)
 
-            # Convert detections to JSON
-            detections_json = json.dumps(detections, indent=4)
+        # Convert detections to JSON
+        print('Converting to json...')
+        detections_json = json.dumps(detections, indent=4)
 
-            # Print the JSON output
-            print(detections_json)
-        
-        except Exception as e:
-            print(f"Error: {e}")
+        # Print the JSON output
+        print(detections_json)
+    
+    except Exception as e:
+        print(f"Error: {e}")
 
-        # Wait for 15 minutes before running again
-        time.sleep(900)  # 900 seconds = 15 minutes
+    # Wait for 15 minutes before running again
+    #time.sleep(900)  # 900 seconds = 15 minutes
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python detect_objects.py <image_url>")
+    print('Running v0.1.1')
+
+    if len(sys.argv) < 2:
+        print("Usage: python detect_objects.py image_url [score_threshold]")
         sys.exit(1)
     
     image_url = sys.argv[1]
-    main(image_url)
+    score_threshold = 0.3
+    if len(sys.argv) == 3:
+        score_threshold = float(sys.argv[2])
 
-
-
-
-
+    main(image_url, score_threshold)
