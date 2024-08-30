@@ -93,7 +93,7 @@ def main(url, score_threshold):
             print(f"Error: {e}")
 
         # Wait for 15 minutes before running again
-        time.sleep(900)  # 900 seconds = 15 minutes
+        #time.sleep(900)  # 900 seconds = 15 minutes
 
 if __name__ == "__main__":
     print('Running v0.1.1')
