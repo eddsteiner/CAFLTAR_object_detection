@@ -51,6 +51,7 @@ def postprocess(output, threshold=0.3):
     current_time = datetime.datetime.now().isoformat()
 
     for box, label, score in zip(boxes, labels, scores):
+        print(f'Detected object: {COCO_INSTANCE_CATEGORY_NAMES[label.item()]} ({score})')
         if score >= threshold:
             label_name = COCO_INSTANCE_CATEGORY_NAMES[label.item()]
             for group_name, group_items in groups.items():
@@ -70,20 +71,25 @@ def main(url, score_threshold):
     while True:
         try:
             # Load the image from the URL
+            print('Loading: ' + url)
             response = requests.get(url)
             img = Image.open(BytesIO(response.content)).convert("RGB")
 
             # Preprocess the image
+            print('Preprocessing the image...')
             input_tensor = preprocess(img)
 
             # Run the model
+            print('Running the model...')
             with torch.no_grad():
                 outputs = model(input_tensor)
 
             # Postprocess the outputs
+            print('Postprocessing results...')
             detections = postprocess(outputs, score_threshold)
 
             # Convert detections to JSON
+            print('Converting to json...')
             detections_json = json.dumps(detections, indent=4)
 
             # Print the JSON output
