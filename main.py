@@ -68,38 +68,37 @@ def postprocess(output, threshold=0.3):
 
 # Main function
 def main(url, score_threshold):
-    while True:
-        try:
-            # Load the image from the URL
-            print('Loading: ' + url)
-            response = requests.get(url)
-            img = Image.open(BytesIO(response.content)).convert("RGB")
+    try:
+        # Load the image from the URL
+        print('Loading: ' + url)
+        response = requests.get(url)
+        img = Image.open(BytesIO(response.content)).convert("RGB")
 
-            # Preprocess the image
-            print('Preprocessing the image...')
-            input_tensor = preprocess(img)
+        # Preprocess the image
+        print('Preprocessing the image...')
+        input_tensor = preprocess(img)
 
-            # Run the model
-            print('Running the model...')
-            with torch.no_grad():
-                outputs = model(input_tensor)
+        # Run the model
+        print('Running the model...')
+        with torch.no_grad():
+            outputs = model(input_tensor)
 
-            # Postprocess the outputs
-            print('Postprocessing results...')
-            detections = postprocess(outputs, score_threshold)
+        # Postprocess the outputs
+        print('Postprocessing results...')
+        detections = postprocess(outputs, score_threshold)
 
-            # Convert detections to JSON
-            print('Converting to json...')
-            detections_json = json.dumps(detections, indent=4)
+        # Convert detections to JSON
+        print('Converting to json...')
+        detections_json = json.dumps(detections, indent=4)
 
-            # Print the JSON output
-            print(detections_json)
-        
-        except Exception as e:
-            print(f"Error: {e}")
+        # Print the JSON output
+        print(detections_json)
+    
+    except Exception as e:
+        print(f"Error: {e}")
 
-        # Wait for 15 minutes before running again
-        #time.sleep(900)  # 900 seconds = 15 minutes
+    # Wait for 15 minutes before running again
+    #time.sleep(900)  # 900 seconds = 15 minutes
 
 if __name__ == "__main__":
     print('Running v0.1.1')
