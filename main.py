@@ -66,7 +66,7 @@ def postprocess(output, threshold=0.3):
     return detected_objects
 
 # Main function
-def main(url):
+def main(url, score_threshold):
     while True:
         try:
             # Load the image from the URL
@@ -81,7 +81,7 @@ def main(url):
                 outputs = model(input_tensor)
 
             # Postprocess the outputs
-            detections = postprocess(outputs)
+            detections = postprocess(outputs, score_threshold)
 
             # Convert detections to JSON
             detections_json = json.dumps(detections, indent=4)
@@ -96,14 +96,15 @@ def main(url):
         time.sleep(900)  # 900 seconds = 15 minutes
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python detect_objects.py <image_url>")
+    print('Running v0.1.1')
+
+    if len(sys.argv) < 2:
+        print("Usage: python detect_objects.py image_url [score_threshold]")
         sys.exit(1)
     
     image_url = sys.argv[1]
-    main(image_url)
+    score_threshold = 0.3
+    if len(sys.argv) == 3:
+        score_threshold = float(sys.argv[2])
 
-
-
-
-
+    main(image_url, score_threshold)
